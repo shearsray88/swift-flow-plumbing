@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 
+const FORMSPREE_ENDPOINT = 'https://formspree.io/f/mdarwbrv';
+
 const SERVICES = [
   'Emergency Repair', 'Drain Cleaning', 'Water Heater',
   'Pipe Repair', 'Fixture Install', 'Inspection', 'Other'
@@ -10,10 +12,29 @@ export default function Contact() {
   const [status, setStatus] = useState('idle');
   const [selected, setSelected] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus('loading');
-    setTimeout(() => setStatus('success'), 900);
+    const form = e.target;
+    const data = new FormData(form);
+    data.append('service', selected);
+    data.append('_website', 'SwiftFlow Plumbing');
+    try {
+      const res = await fetch(FORMSPREE_ENDPOINT, {
+        method: 'POST',
+        body: data,
+        headers: { Accept: 'application/json' },
+      });
+      if (res.ok) {
+        setStatus('success');
+        form.reset();
+        setSelected('');
+      } else {
+        setStatus('error');
+      }
+    } catch {
+      setStatus('error');
+    }
   };
 
   return (
@@ -73,7 +94,6 @@ export default function Contact() {
               </div>
             </div>
 
-            {/* Emergency CTA */}
             <div className="bg-red-50 border border-red-100 rounded-2xl p-5 flex items-center gap-4">
               <div className="w-10 h-10 bg-red-500 rounded-xl flex items-center justify-center flex-shrink-0">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
@@ -111,18 +131,18 @@ export default function Contact() {
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div>
                     <label className="text-xs text-text-muted uppercase tracking-wide mb-2 block">First Name</label>
-                    <input required placeholder="John"
+                    <input required name="first_name" placeholder="John"
                       className="w-full bg-white border border-gray-mid rounded-xl px-4 py-3 text-sm text-text-dark placeholder-text-muted focus:outline-none focus:border-brand"/>
                   </div>
                   <div>
                     <label className="text-xs text-text-muted uppercase tracking-wide mb-2 block">Last Name</label>
-                    <input required placeholder="Smith"
+                    <input required name="last_name" placeholder="Smith"
                       className="w-full bg-white border border-gray-mid rounded-xl px-4 py-3 text-sm text-text-dark placeholder-text-muted focus:outline-none focus:border-brand"/>
                   </div>
                 </div>
                 <div>
                   <label className="text-xs text-text-muted uppercase tracking-wide mb-2 block">Phone Number</label>
-                  <input required type="tel" placeholder="(602) 000-0000"
+                  <input required name="phone" type="tel" placeholder="(602) 000-0000"
                     className="w-full bg-white border border-gray-mid rounded-xl px-4 py-3 text-sm text-text-dark placeholder-text-muted focus:outline-none focus:border-brand"/>
                 </div>
                 <div>
@@ -146,9 +166,12 @@ export default function Contact() {
                 </div>
                 <div>
                   <label className="text-xs text-text-muted uppercase tracking-wide mb-2 block">Describe the Issue</label>
-                  <textarea rows={3} placeholder="What is happening and where..."
+                  <textarea rows={3} name="message" placeholder="What is happening and where..."
                     className="w-full bg-white border border-gray-mid rounded-xl px-4 py-3 text-sm text-text-dark placeholder-text-muted focus:outline-none focus:border-brand resize-none"/>
                 </div>
+                {status === 'error' && (
+                  <p className="text-red-500 text-xs text-center">Something went wrong. Please try again or call us directly.</p>
+                )}
                 <button type="submit" disabled={status === 'loading'}
                   className="btn-primary w-full justify-center py-4 mt-1">
                   {status === 'loading' ? 'Sending...' : 'Request Free Quote'}
