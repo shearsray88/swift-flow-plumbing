@@ -13,9 +13,7 @@ export default function Home() {
     <>
       <Head>
         <title>SwiftFlow Plumbing — Phoenix AZ Plumber | Same-Day Service</title>
-        <meta name="description" content="Phoenix's trusted plumbers for leaks, clogs, water heaters, and emergencies. Same-day service, upfront pricing, AZ licensed. Call (602) 555-0147." />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="data:," />
       </Head>
       <Navigation />
         <a href="tel:+16025550147"
