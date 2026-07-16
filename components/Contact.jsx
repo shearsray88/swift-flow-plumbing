@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const FORMSPREE_ENDPOINT = 'https://formspree.io/f/mdarwbrv';
 
@@ -8,16 +8,48 @@ const SERVICES = [
   'Pipe Repair', 'Fixture Install', 'Inspection', 'Other'
 ];
 
+const URGENCY = ['Right now — emergency', 'Today', 'This week', 'Just getting a quote'];
+
+function BotBubble({ children }) {
+  return (
+    <div className="flex items-start gap-3">
+      <div className="w-8 h-8 bg-brand rounded-full flex items-center justify-center flex-shrink-0">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        </svg>
+      </div>
+      <div className="bg-white border border-gray-mid rounded-2xl rounded-tl-sm px-4 py-3 text-sm text-text-dark max-w-[85%]">
+        {children}
+      </div>
+    </div>
+  );
+}
+
+function UserBubble({ children }) {
+  return (
+    <div className="flex justify-end">
+      <div className="bg-brand text-white rounded-2xl rounded-tr-sm px-4 py-3 text-sm max-w-[85%]">
+        {children}
+      </div>
+    </div>
+  );
+}
+
 export default function Contact() {
+  const [step, setStep] = useState('service'); // service -> urgency -> contact -> success
+  const [service, setService] = useState('');
+  const [urgency, setUrgency] = useState('');
   const [status, setStatus] = useState('idle');
-  const [selected, setSelected] = useState('');
+  const [error, setError] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setStatus('loading');
+    setError(false);
     const form = e.target;
     const data = new FormData(form);
-    data.append('service', selected);
+    data.append('service', service);
+    data.append('urgency', urgency);
     data.append('_website', 'SwiftFlow Plumbing');
     try {
       const res = await fetch(FORMSPREE_ENDPOINT, {
@@ -27,13 +59,14 @@ export default function Contact() {
       });
       if (res.ok) {
         setStatus('success');
-        form.reset();
-        setSelected('');
+        setStep('success');
       } else {
-        setStatus('error');
+        setStatus('idle');
+        setError(true);
       }
     } catch {
-      setStatus('error');
+      setStatus('idle');
+      setError(true);
     }
   };
 
@@ -53,7 +86,7 @@ export default function Contact() {
               Get a free quote today.
             </h2>
             <p className="text-text-mid leading-relaxed mb-10">
-              Fill out the form and we will call you back within 30 minutes during business hours. For emergencies, call us directly.
+              Answer a couple quick questions and we'll call you back within 30 minutes during business hours. For emergencies, call us directly.
             </p>
 
             <div className="flex flex-col gap-5 mb-10">
@@ -114,71 +147,84 @@ export default function Contact() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="bg-gray-warm border border-gray-mid rounded-2xl p-8"
+            className="bg-gray-warm border border-gray-mid rounded-2xl p-6 sm:p-8"
           >
-            {status === 'success' ? (
-              <div className="text-center py-12">
-                <div className="w-14 h-14 bg-brand rounded-full flex items-center justify-center mx-auto mb-4">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
-                    <path d="M20 6L9 17l-5-5"/>
-                  </svg>
-                </div>
-                <h3 className="font-display font-bold text-2xl text-text-dark mb-2">Request Received!</h3>
-                <p className="text-text-muted text-sm">We will call you back within 30 minutes.</p>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-                <div className="grid sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-xs text-text-muted uppercase tracking-wide mb-2 block">First Name</label>
-                    <input required name="first_name" placeholder="John"
-                      className="w-full bg-white border border-gray-mid rounded-xl px-4 py-3 text-sm text-text-dark placeholder-text-muted focus:outline-none focus:border-brand"/>
+            <div className="flex flex-col gap-4 mb-2">
+              <BotBubble>Hey! What's going on with your plumbing? 🔧</BotBubble>
+
+              {service && <UserBubble>{service}</UserBubble>}
+
+              {(step === 'urgency' || step === 'contact' || step === 'success') && (
+                <BotBubble>Got it — how soon do you need someone out?</BotBubble>
+              )}
+
+              {urgency && <UserBubble>{urgency}</UserBubble>}
+
+              {(step === 'contact' || step === 'success') && (
+                <BotBubble>
+                  {step === 'success' ? 'Perfect, got everything I need!' : 'Almost done — where should we send your free quote?'}
+                </BotBubble>
+              )}
+            </div>
+
+            <AnimatePresence mode="wait">
+              {step === 'service' && (
+                <motion.div key="service" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="flex flex-wrap gap-2 mt-4">
+                  {SERVICES.map((s) => (
+                    <button key={s} type="button" onClick={() => { setService(s); setStep('urgency'); }}
+                      className="text-xs font-sans px-3.5 py-2 rounded-full border border-gray-mid bg-white text-text-mid hover:border-brand hover:text-brand transition-colors">
+                      {s}
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+
+              {step === 'urgency' && (
+                <motion.div key="urgency" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="flex flex-wrap gap-2 mt-4">
+                  {URGENCY.map((u) => (
+                    <button key={u} type="button" onClick={() => { setUrgency(u); setStep('contact'); }}
+                      className="text-xs font-sans px-3.5 py-2 rounded-full border border-gray-mid bg-white text-text-mid hover:border-brand hover:text-brand transition-colors">
+                      {u}
+                    </button>
+                  ))}
+                </motion.div>
+              )}
+
+              {step === 'contact' && (
+                <motion.form key="contact" onSubmit={handleSubmit} initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="flex flex-col gap-3 mt-4">
+                  <div className="grid sm:grid-cols-2 gap-3">
+                    <input required name="first_name" placeholder="First name"
+                      className="bg-white border border-gray-mid rounded-xl px-4 py-3 text-sm text-text-dark placeholder-text-muted focus:outline-none focus:border-brand"/>
+                    <input required name="phone" type="tel" placeholder="Phone number"
+                      className="bg-white border border-gray-mid rounded-xl px-4 py-3 text-sm text-text-dark placeholder-text-muted focus:outline-none focus:border-brand"/>
                   </div>
-                  <div>
-                    <label className="text-xs text-text-muted uppercase tracking-wide mb-2 block">Last Name</label>
-                    <input required name="last_name" placeholder="Smith"
-                      className="w-full bg-white border border-gray-mid rounded-xl px-4 py-3 text-sm text-text-dark placeholder-text-muted focus:outline-none focus:border-brand"/>
+                  <textarea rows={2} name="message" placeholder="Anything else we should know? (optional)"
+                    className="bg-white border border-gray-mid rounded-xl px-4 py-3 text-sm text-text-dark placeholder-text-muted focus:outline-none focus:border-brand resize-none"/>
+                  {error && <p className="text-red-500 text-xs">Something went wrong. Please try again or call us directly.</p>}
+                  <button type="submit" disabled={status === 'loading'} className="btn-primary justify-center py-3.5 mt-1">
+                    {status === 'loading' ? 'Sending...' : (
+                      <>
+                        Send
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                          <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                        </svg>
+                      </>
+                    )}
+                  </button>
+                </motion.form>
+              )}
+
+              {step === 'success' && (
+                <motion.div key="success" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mt-4 flex items-center gap-3 bg-brand/10 border border-brand/20 rounded-xl px-4 py-3.5">
+                  <div className="w-8 h-8 bg-brand rounded-full flex items-center justify-center flex-shrink-0">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
+                      <path d="M20 6L9 17l-5-5"/>
+                    </svg>
                   </div>
-                </div>
-                <div>
-                  <label className="text-xs text-text-muted uppercase tracking-wide mb-2 block">Phone Number</label>
-                  <input required name="phone" type="tel" placeholder="(602) 000-0000"
-                    className="w-full bg-white border border-gray-mid rounded-xl px-4 py-3 text-sm text-text-dark placeholder-text-muted focus:outline-none focus:border-brand"/>
-                </div>
-                <div>
-                  <label className="text-xs text-text-muted uppercase tracking-wide mb-2 block">Service Needed</label>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                    {SERVICES.map((s) => (
-                      <button
-                        key={s}
-                        type="button"
-                        onClick={() => setSelected(s)}
-                        className={`text-xs font-sans px-3 py-2 rounded-lg border transition-all ${
-                          selected === s
-                            ? 'bg-brand border-brand text-white'
-                            : 'bg-white border-gray-mid text-text-mid hover:border-brand/50'
-                        }`}
-                      >
-                        {s}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-                <div>
-                  <label className="text-xs text-text-muted uppercase tracking-wide mb-2 block">Describe the Issue</label>
-                  <textarea rows={3} name="message" placeholder="What is happening and where..."
-                    className="w-full bg-white border border-gray-mid rounded-xl px-4 py-3 text-sm text-text-dark placeholder-text-muted focus:outline-none focus:border-brand resize-none"/>
-                </div>
-                {status === 'error' && (
-                  <p className="text-red-500 text-xs text-center">Something went wrong. Please try again or call us directly.</p>
-                )}
-                <button type="submit" disabled={status === 'loading'}
-                  className="btn-primary w-full justify-center py-4 mt-1">
-                  {status === 'loading' ? 'Sending...' : 'Request Free Quote'}
-                </button>
-                <p className="text-xs text-text-muted text-center">We call back within 30 minutes during business hours.</p>
-              </form>
-            )}
+                  <p className="text-text-dark text-sm font-semibold">We'll call you back within 30 minutes!</p>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
         </div>
       </div>

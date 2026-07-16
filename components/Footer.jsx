@@ -1,6 +1,8 @@
+const FOOTER_LINKS = ['Overview', 'Services', 'Process', 'Reviews', 'Coverage', 'Contact'];
+
 export default function Footer() {
   return (
-    <footer className="bg-text-dark py-12">
+    <footer className="bg-text-dark py-12 lg:pl-24 pb-20 lg:pb-12">
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
           <div>
@@ -14,8 +16,8 @@ export default function Footer() {
             </div>
             <p className="text-white/30 text-xs">Licensed plumbers serving Phoenix & surrounding areas</p>
           </div>
-          <div className="flex flex-col sm:flex-row gap-4 sm:gap-8">
-            {['Services', 'About', 'Reviews', 'Contact'].map(item => (
+          <div className="flex flex-wrap gap-4 sm:gap-8">
+            {FOOTER_LINKS.map(item => (
               <a key={item} href={`#${item.toLowerCase()}`}
                 className="text-white/40 text-xs hover:text-white transition-colors">
                 {item}

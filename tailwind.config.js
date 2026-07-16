@@ -1,8 +1,8 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    "./pages/**/*.{js,jsx}",
-    "./components/**/*.{js,jsx}",
+  "./pages/**/*.{js,ts,jsx,tsx}",
+  "./components/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
@@ -18,9 +18,9 @@ module.exports = {
         'text-muted': '#94A3B8',
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
-        display: ['Inter', 'system-ui', 'sans-serif'],
-      },
+      sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
+      display: ['var(--font-inter)', 'system-ui', 'sans-serif'],
+},
     },
   },
   plugins: [],
