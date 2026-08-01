@@ -29,6 +29,12 @@ export default function Footer() {
           <p className="text-white/20 text-xs">&copy; 2026 SwiftFlow Plumbing. All rights reserved.</p>
           <p className="text-white/20 text-xs">AZ License #ROC-289341 · Phoenix, AZ</p>
         </div>
+        <div className="text-center mt-4">
+          <a href="https://duraysdev.com" target="_blank" rel="noopener noreferrer"
+            className="text-white/20 text-xs hover:text-white/50 transition-colors">
+            Design &amp; Development by Durays Dev
+          </a>
+        </div>
       </div>
     </footer>
   );
