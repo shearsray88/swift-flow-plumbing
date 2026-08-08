@@ -30,7 +30,7 @@ export default function Footer() {
           <p className="text-white/20 text-xs">AZ License #ROC-289341 · Phoenix, AZ</p>
         </div>
         <div className="text-center mt-4">
-          <a href="https://duraysdev.com" target="_blank" rel="noopener noreferrer"
+          <a href="https://duraysdev.com/portfolio/swiftflow-plumbing" target="_blank" rel="noopener noreferrer"
             className="text-white/20 text-xs hover:text-white/50 transition-colors">
             Design &amp; Development by Durays Dev
           </a>
