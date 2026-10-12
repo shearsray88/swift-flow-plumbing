@@ -12,7 +12,11 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>SwiftFlow Plumbing — Phoenix AZ Plumber | Same-Day Service</title>
+        <title>SwiftFlow Plumbing | Phoenix AZ Plumber | Same-Day Service</title>
+        <meta
+          name="description"
+          content="SwiftFlow Plumbing serves Phoenix, AZ with emergency plumbing, drain cleaning, water heater service, and pipe repair. Call or request a visit today."
+        />
       </Head>
 
       <Navigation />
