@@ -97,7 +97,7 @@ function Panel({ service, index, total }) {
   const num = String(index + 1).padStart(2, '0');
 
   return (
-    <div ref={ref} className="relative min-h-[80vh] lg:min-h-[92vh] flex items-center overflow-hidden bg-text-dark">
+    <div ref={ref} className="screen relative flex items-center overflow-hidden bg-text-dark">
       <motion.img
         src={service.image}
         alt=""
@@ -113,7 +113,7 @@ function Panel({ service, index, total }) {
         } lg:from-black/75 lg:via-black/45 lg:to-transparent`}
       />
 
-      <div className={`relative z-10 w-full max-w-7xl mx-auto px-6 py-20 flex ${alignRight ? 'lg:justify-end' : 'lg:justify-start'} items-end lg:items-center`}>
+      <div className={`relative z-10 w-full max-w-7xl mx-auto px-6 py-12 lg:py-20 flex ${alignRight ? 'lg:justify-end' : 'lg:justify-start'} items-end lg:items-center`}>
         <motion.div
           className="max-w-xl w-full"
           variants={container}
@@ -173,7 +173,7 @@ export default function Services() {
 
   return (
     <section id="services" className="relative bg-text-dark">
-      <div className="max-w-7xl mx-auto px-6 pt-24 pb-14 lg:pt-32 lg:pb-20">
+      <div className="screen flex items-center max-w-7xl mx-auto px-6">
         <motion.div
           variants={container}
           initial={reduce ? 'show' : 'hidden'}

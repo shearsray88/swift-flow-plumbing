@@ -160,8 +160,8 @@ export default function MapSection() {
       onMouseEnter={() => setHovering(true)}
       onMouseLeave={() => setHovering(false)}
     >
-      <div className="grid lg:grid-cols-[minmax(380px,0.8fr)_1.4fr] min-h-[92vh]">
-        <div className="relative order-1 lg:order-2 h-[58vh] lg:h-auto overflow-hidden">
+      <div className="grid lg:grid-cols-[minmax(380px,0.8fr)_1.4fr] screen">
+        <div className="relative order-1 lg:order-2 h-[32svh] lg:h-auto overflow-hidden">
           <svg viewBox="0 0 1000 700" preserveAspectRatio="xMidYMid slice" className="absolute inset-0 w-full h-full" role="img" aria-label="Service area map around Phoenix">
             <defs>
               <radialGradient id="mapglow" cx="50%" cy="47%" r="62%">
@@ -299,7 +299,7 @@ export default function MapSection() {
           <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-[#07131d] to-transparent lg:hidden pointer-events-none" />
         </div>
 
-        <div className="relative order-2 lg:order-1 flex flex-col justify-center px-6 lg:px-14 py-14 lg:py-24">
+        <div className="relative order-2 lg:order-1 flex flex-col justify-center px-6 lg:px-14 py-6 lg:py-10">
           <motion.div
             initial={{ opacity: 0, y: 28 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -309,11 +309,11 @@ export default function MapSection() {
             <p className="font-sans text-brand-light font-bold text-xs tracking-[0.2em] uppercase mb-5">Service Area</p>
 
             <p className="font-display font-bold text-white leading-none tabular-nums flex items-baseline">
-              <span className="text-7xl lg:text-8xl">~<motion.span>{minutes}</motion.span></span>
+              <span className="text-5xl lg:text-7xl">~<motion.span>{minutes}</motion.span></span>
               <span className="text-2xl lg:text-3xl ml-3 text-brand-light">min</span>
             </p>
 
-            <div className="min-h-[44px] flex items-center overflow-hidden mt-3 mb-8">
+            <div className="min-h-[44px] flex items-center overflow-hidden mt-1 mb-4 lg:mb-6">
               <AnimatePresence mode="wait">
                 <motion.h2
                   key={zone.id}
@@ -328,7 +328,7 @@ export default function MapSection() {
               </AnimatePresence>
             </div>
 
-            <form onSubmit={checkZip} className="mb-3">
+            <form onSubmit={checkZip} className="mb-2">
               <label htmlFor="zip-check" className="block text-white/70 text-sm mb-2">Check your ZIP code</label>
               <div className="flex gap-2 max-w-sm">
                 <input
@@ -343,7 +343,7 @@ export default function MapSection() {
                 <button type="submit" className="btn-primary px-5 py-3">Check</button>
               </div>
             </form>
-            <div className="min-h-[40px] mb-6">
+            <div className="min-h-[24px] mb-3 lg:min-h-[40px] lg:mb-6">
               <AnimatePresence mode="wait">
                 {zipResult && (
                   <motion.p
@@ -359,8 +359,8 @@ export default function MapSection() {
               </AnimatePresence>
             </div>
 
-            <p className="text-white/55 text-sm mb-3">Hover a city on the map, or tap one below.</p>
-            <div className="flex flex-wrap gap-2 mb-8">
+            <p className="hidden lg:block text-white/55 text-sm mb-3">Hover a city on the map, or tap one below.</p>
+            <div className="flex flex-wrap gap-2 lg:mb-8">
               {ZONES.map((z) => {
                 const isActive = active === z.id;
                 return (
@@ -380,7 +380,7 @@ export default function MapSection() {
               })}
             </div>
 
-            <div className="border-l-2 border-brand pl-4 mb-6">
+            <div className="hidden lg:block border-l-2 border-brand pl-4 mb-6">
               <p className="font-sans font-bold text-white text-sm">SwiftFlow Plumbing HQ</p>
               <p className="text-white/55 text-xs mt-0.5">4821 E Thomas Rd, Phoenix, AZ 85018</p>
               <a href="https://maps.google.com/maps?q=4821+E+Thomas+Rd+Phoenix+AZ+85018" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-brand-light text-xs font-semibold mt-2 hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-light rounded">
@@ -391,7 +391,7 @@ export default function MapSection() {
               </a>
             </div>
 
-            <div className="flex items-center gap-3">
+            <div className="hidden lg:flex items-center gap-3">
               <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse flex-shrink-0" />
               <p className="font-sans text-white/65 text-xs">Licensed & insured · 24/7 emergency dispatch</p>
             </div>

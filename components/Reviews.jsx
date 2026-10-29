@@ -43,17 +43,17 @@ export default function Reviews() {
   const review = REVIEWS[index];
 
   return (
-    <section id="reviews" className="py-24 bg-gray-warm">
-      <div className="max-w-4xl mx-auto px-6">
+    <section id="reviews" className="screen flex items-center py-8 lg:py-12 bg-gray-warm">
+      <div className="max-w-4xl mx-auto px-6 w-full">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-12"
+          className="text-center mb-5 lg:mb-12"
         >
           <span className="section-tag">Customer Reviews</span>
-          <h2 className="font-display font-bold text-4xl sm:text-5xl text-text-dark leading-tight mb-4">
+          <h2 className="font-display font-bold text-3xl sm:text-5xl text-text-dark leading-tight mb-3 lg:mb-4">
             Phoenix homeowners trust SwiftFlow.
           </h2>
           <div className="flex items-center justify-center gap-2">
@@ -66,7 +66,7 @@ export default function Reviews() {
         </motion.div>
 
         <div
-          className="relative bg-white rounded-3xl border border-gray-mid p-10 sm:p-14 overflow-hidden"
+          className="relative bg-white rounded-3xl border border-gray-mid p-6 sm:p-10 lg:p-14 overflow-hidden"
           onMouseEnter={() => setPaused(true)}
           onMouseLeave={() => setPaused(false)}
         >
@@ -83,10 +83,10 @@ export default function Reviews() {
               transition={{ duration: 0.4 }}
               className="relative"
             >
-              <div className="flex gap-1 mb-6 justify-center">
+              <div className="flex gap-1 mb-4 lg:mb-6 justify-center">
                 {[0, 1, 2, 3, 4].map((i) => <span key={i} className="text-amber-400 text-xl">★</span>)}
               </div>
-              <p className="text-text-dark text-xl sm:text-2xl leading-relaxed text-center font-medium mb-8 max-w-2xl mx-auto">
+              <p className="text-text-dark text-lg sm:text-2xl leading-relaxed text-center font-medium mb-5 lg:mb-8 max-w-2xl mx-auto">
                 "{review.text}"
               </p>
               <div className="flex flex-col items-center gap-3">
@@ -115,7 +115,7 @@ export default function Reviews() {
         </div>
 
         {/* Dots — jump / progress indicator, no initials */}
-        <div className="flex items-center justify-center gap-2.5 mt-8">
+        <div className="flex items-center justify-center gap-2.5 mt-5 lg:mt-8">
           {REVIEWS.map((r, i) => {
             const isActive = index === i;
             return (

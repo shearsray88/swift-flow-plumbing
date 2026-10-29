@@ -43,7 +43,7 @@ export default function Stats() {
   const bgY = useTransform(scrollYProgress, [0, 1], ['-8%', '8%']);
 
   return (
-    <section ref={ref} className="relative overflow-hidden bg-text-dark py-24 lg:py-32">
+    <section ref={ref} className="screen relative flex items-center overflow-hidden bg-text-dark py-12">
       <motion.img
         src="/images/stats-bg.webp"
         alt=""
@@ -55,7 +55,7 @@ export default function Stats() {
       />
       <div className="absolute inset-0 bg-text-dark/70" />
 
-      <div className="relative max-w-7xl mx-auto px-6">
+      <div className="relative max-w-7xl mx-auto px-6 w-full">
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-y-12">
           {STATS.map((s, i) => (
             <motion.div

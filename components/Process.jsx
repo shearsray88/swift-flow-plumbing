@@ -47,9 +47,9 @@ function Step({ step, index }) {
   const hiddenClip = imageLeft ? 'inset(0% 100% 0% 0%)' : 'inset(0% 0% 0% 100%)';
 
   return (
-    <div ref={ref} className={`grid lg:grid-cols-2 min-h-[85vh] ${index % 2 === 0 ? 'bg-brand' : 'bg-brand-dark'}`}>
+    <div ref={ref} className={`grid lg:grid-cols-2 grid-rows-[40%_60%] lg:grid-rows-1 h-[calc(100svh-4.5rem)] lg:h-screen overflow-hidden ${index % 2 === 0 ? 'bg-brand' : 'bg-brand-dark'}`}>
       <motion.div
-        className={`relative overflow-hidden min-h-[48vh] lg:min-h-0 ${imageLeft ? 'lg:order-1' : 'lg:order-2'}`}
+        className={`relative overflow-hidden min-h-0 ${imageLeft ? 'lg:order-1' : 'lg:order-2'}`}
         variants={{ hidden: {}, show: {} }}
         initial={reduce ? 'show' : 'hidden'}
         whileInView="show"
@@ -73,7 +73,7 @@ function Step({ step, index }) {
         </motion.div>
       </motion.div>
 
-      <div className={`relative flex items-center px-6 lg:px-16 py-16 lg:py-0 ${imageLeft ? 'lg:order-2' : 'lg:order-1'}`}>
+      <div className={`relative flex items-center px-6 lg:px-16 py-6 lg:py-0 ${imageLeft ? 'lg:order-2' : 'lg:order-1'}`}>
         <motion.div
           className="max-w-md w-full"
           variants={container}
@@ -83,7 +83,7 @@ function Step({ step, index }) {
         >
           <motion.span
             variants={rise}
-            className="block font-display font-bold text-8xl lg:text-9xl leading-none mb-2"
+            className="block font-display font-bold text-7xl lg:text-9xl leading-none mb-2"
             style={{ color: 'transparent', WebkitTextStroke: '1.5px rgba(255,255,255,0.75)' }}
           >
             {step.num}
@@ -111,7 +111,7 @@ export default function Process() {
 
   return (
     <section id="process" className="relative bg-brand">
-      <div className="max-w-7xl mx-auto px-6 pt-24 pb-14 lg:pt-32 lg:pb-20">
+      <div className="screen flex items-center max-w-7xl mx-auto px-6">
         <motion.div
           variants={container}
           initial={reduce ? 'show' : 'hidden'}

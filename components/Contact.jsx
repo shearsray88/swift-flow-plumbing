@@ -75,7 +75,7 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" ref={sectionRef} className="relative overflow-hidden py-24 lg:py-32 bg-text-dark">
+    <section id="contact" ref={sectionRef} className="screen relative flex items-center overflow-hidden py-12 lg:py-14 bg-text-dark">
       <motion.img
         src="/images/contact-van.webp"
         alt=""
@@ -86,8 +86,8 @@ export default function Contact() {
         style={reduce ? undefined : { y: bgY }}
       />
       <div className="absolute inset-0 bg-gradient-to-r from-text-dark/90 via-text-dark/75 to-text-dark/60" />
-      <div className="relative max-w-7xl mx-auto px-6">
-        <div className="grid lg:grid-cols-2 gap-16 items-start">
+      <div className="relative max-w-7xl mx-auto px-6 w-full">
+        <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-start">
 
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -96,14 +96,14 @@ export default function Contact() {
             transition={{ duration: 0.6 }}
           >
             <span className="section-tag !text-brand-light">Book a Plumber</span>
-            <h2 className="font-display font-bold text-4xl sm:text-5xl text-white leading-tight mb-6">
+            <h2 className="font-display font-bold text-3xl sm:text-5xl text-white leading-tight mb-3 lg:mb-6">
               Get a free quote today.
             </h2>
-            <p className="text-white/75 leading-relaxed mb-10">
+            <p className="text-white/75 leading-relaxed mb-6 lg:mb-10">
               Answer a couple quick questions and we'll call you back within 30 minutes during business hours. For emergencies, call us directly.
             </p>
 
-            <div className="flex flex-col gap-5 mb-10">
+            <div className="flex flex-col gap-5 mb-0 lg:mb-10">
               <a href="tel:+16025550147" className="flex items-center gap-4 group">
                 <div className="w-12 h-12 bg-brand rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-brand-dark transition-colors">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
@@ -116,7 +116,7 @@ export default function Contact() {
                 </div>
               </a>
 
-              <a href="mailto:info@swiftflowplumbing.com" className="flex items-center gap-4 group">
+              <a href="mailto:info@swiftflowplumbing.com" className="hidden lg:flex items-center gap-4 group">
                 <div className="w-12 h-12 bg-brand rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-brand-dark transition-colors">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
                     <path d="M4 4h16v16H4z"/><path d="M4 6l8 7 8-7"/>
@@ -128,7 +128,7 @@ export default function Contact() {
                 </div>
               </a>
 
-              <div className="flex items-center gap-4">
+              <div className="hidden lg:flex items-center gap-4">
                 <div className="w-12 h-12 bg-brand rounded-xl flex items-center justify-center flex-shrink-0">
                   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
                     <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
@@ -141,7 +141,7 @@ export default function Contact() {
               </div>
             </div>
 
-            <div className="flex items-center gap-4 border-t border-white/15 pt-6">
+            <div className="hidden lg:flex items-center gap-4 border-t border-white/15 pt-6">
               <span className="relative flex h-3 w-3 flex-shrink-0">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-60" />
                 <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500" />

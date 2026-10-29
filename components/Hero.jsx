@@ -60,8 +60,7 @@ export default function Hero() {
     <section
       id="overview"
       ref={sectionRef}
-      className="relative flex items-center overflow-hidden bg-text-dark"
-      style={{ minHeight: '100vh' }}
+      className="screen relative flex items-center overflow-hidden bg-text-dark"
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
@@ -88,7 +87,7 @@ export default function Hero() {
         <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/50 to-transparent" />
       </motion.div>
 
-      <motion.div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-10 w-full py-28" style={contentStyle}>
+      <motion.div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-10 w-full py-14 lg:py-24" style={contentStyle}>
         <div className="max-w-2xl">
           <AnimatePresence mode="wait">
             <motion.div key={slide.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, y: -16 }} transition={{ duration: dur(0.4) }}>
@@ -96,13 +95,13 @@ export default function Hero() {
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: dur(0.5), ease: EASE }}
-                className="inline-flex items-center gap-2 px-4 py-1.5 bg-black/40 backdrop-blur-sm border border-white/30 rounded-full mb-6"
+                className="inline-flex items-center gap-2 px-4 py-1.5 bg-black/40 backdrop-blur-sm border border-white/30 rounded-full mb-4 lg:mb-6"
               >
                 <span className="w-2 h-2 rounded-full bg-brand-light animate-pulse" />
                 <span className="text-white font-bold text-xs tracking-wide uppercase" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.8)' }}>{slide.eyebrow}</span>
               </motion.div>
 
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white leading-[1.05] mb-6" style={{ textShadow: '0 2px 20px rgba(0,0,0,0.6)' }}>
+              <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold text-white leading-[1.05] mb-4 lg:mb-6" style={{ textShadow: '0 2px 20px rgba(0,0,0,0.6)' }}>
                 {slide.headline.map((line, i) => (
                   <span key={line} className="block overflow-hidden pb-[0.08em]">
                     <motion.span
@@ -121,7 +120,7 @@ export default function Hero() {
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: dur(0.6), ease: EASE, delay: reduce ? 0 : 0.5 }}
-                className="text-white font-medium text-lg leading-relaxed mb-8 max-w-md"
+                className="text-white font-medium text-base lg:text-lg leading-relaxed mb-5 lg:mb-8 max-w-md"
                 style={{ textShadow: '0 1px 8px rgba(0,0,0,0.8)' }}
               >
                 {slide.copy}
@@ -131,7 +130,7 @@ export default function Hero() {
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: dur(0.6), ease: EASE, delay: reduce ? 0 : 0.65 }}
-                className="inline-flex items-center gap-2.5 bg-black/40 backdrop-blur-sm border border-white/30 rounded-full px-4 py-2 mb-10"
+                className="inline-flex items-center gap-2.5 bg-black/40 backdrop-blur-sm border border-white/30 rounded-full px-4 py-2 mb-6 lg:mb-10"
               >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22D3EE" strokeWidth="2.5">
                   <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
