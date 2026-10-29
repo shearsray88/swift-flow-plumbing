@@ -251,8 +251,10 @@ export default function MapSection() {
                   aria-label={`${z.name}, about ${z.time} minutes`}
                   onMouseEnter={() => setActive(z.id)}
                   onClick={() => setActive(z.id)}
+                  onFocus={() => setActive(z.id)}
                   onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && setActive(z.id)}
-                  className="cursor-pointer focus-visible:outline-none"
+                  className="cursor-pointer"
+                  style={{ outline: 'none' }}
                   initial={false}
                   animate={{ opacity: inView ? 1 : 0 }}
                   transition={{ duration: reduce ? 0 : 0.5, delay: reduce ? 0 : 0.8 + zi * 0.12 }}
