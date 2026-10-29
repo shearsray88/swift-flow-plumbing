@@ -1,11 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 
 const AUTO_ADVANCE_MS = 6000;
+const EASE = [0.22, 1, 0.36, 1];
 
 const SLIDES = [
   {
     id: 'leak',
+    image: '/images/hero-1-leak.webp',
     eyebrow: 'Burst Pipe? Act Fast.',
     headline: ['Pipe Burst?', "We're On", 'Our Way.'],
     copy: "Water spreading fast doesn't wait for business hours. Neither do we — emergency crews dispatch within the hour, any time, day or night.",
@@ -13,6 +15,7 @@ const SLIDES = [
   },
   {
     id: 'heater',
+    image: '/images/hero-2-heater.webp',
     eyebrow: 'No Hot Water?',
     headline: ['No Hot Water?', 'Fixed', 'Today.'],
     copy: 'Cold showers and a family waiting are a bad combo. Most water heater repairs and replacements are done same-day, upfront price before we start.',
@@ -20,6 +23,7 @@ const SLIDES = [
   },
   {
     id: 'drain',
+    image: '/images/hero-3-drain.webp',
     eyebrow: 'Drain Backed Up?',
     headline: ['Drain Backed Up?', 'Cleared', 'Fast.'],
     copy: "Slow drains turn into backups when you least expect it. Camera inspection and hydro-jetting get to the real problem, not just a temporary fix.",
@@ -31,6 +35,8 @@ export default function Hero() {
   const [index, setIndex] = useState(0);
   const [paused, setPaused] = useState(false);
   const timerRef = useRef(null);
+  const sectionRef = useRef(null);
+  const reduce = useReducedMotion();
 
   useEffect(() => {
     if (paused) return;
@@ -38,55 +44,100 @@ export default function Hero() {
     return () => clearInterval(timerRef.current);
   }, [paused, index]);
 
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start start', 'end start'] });
+  const bgY = useTransform(scrollYProgress, [0, 1], ['0%', '8%']);
+  const bgScale = useTransform(scrollYProgress, [0, 1], [1, 1.12]);
+  const contentY = useTransform(scrollYProgress, [0, 1], [0, -90]);
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.65], [1, 0]);
+
+  const bgStyle = reduce ? undefined : { y: bgY, scale: bgScale };
+  const contentStyle = reduce ? undefined : { y: contentY, opacity: contentOpacity };
+  const dur = (seconds) => (reduce ? 0 : seconds);
+
   const slide = SLIDES[index];
 
   return (
     <section
       id="overview"
-      className="relative flex items-center overflow-hidden"
+      ref={sectionRef}
+      className="relative flex items-center overflow-hidden bg-text-dark"
       style={{ minHeight: '100vh' }}
       onMouseEnter={() => setPaused(true)}
       onMouseLeave={() => setPaused(false)}
     >
-      <div className="absolute inset-0 z-0">
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="w-full h-full object-cover"
-          style={{ filter: 'grayscale(100%)' }}
-          poster="https://images.unsplash.com/photo-1607472586893-edb57bdc0e39?w=1600&q=80"
-        >
-          <source src="https://www.pexels.com/download/video/9200530/" type="video/mp4" />
-        </video>
-      </div>
+      <motion.div className="absolute inset-x-0 -top-[10%] -bottom-[10%] z-0" style={bgStyle}>
+        {SLIDES.map((s, i) => (
+          <motion.img
+            key={s.id}
+            src={s.image}
+            alt=""
+            aria-hidden="true"
+            decoding="async"
+            loading={i === 0 ? 'eager' : 'lazy'}
+            fetchpriority={i === 0 ? 'high' : 'auto'}
+            className="absolute inset-0 w-full h-full object-cover"
+            initial={false}
+            animate={{ opacity: i === index ? 1 : 0, scale: reduce ? 1 : i === index ? 1.08 : 1 }}
+            transition={{
+              opacity: { duration: dur(1) },
+              scale: { duration: dur(i === index ? AUTO_ADVANCE_MS / 1000 + 1 : 1.2), ease: 'linear' },
+            }}
+          />
+        ))}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/40 to-black/10" />
+        <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/50 to-transparent" />
+      </motion.div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-10 w-full py-28">
+      <motion.div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-10 w-full py-28" style={contentStyle}>
         <div className="max-w-2xl">
           <AnimatePresence mode="wait">
-            <motion.div key={slide.id} initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -16 }} transition={{ duration: 0.5 }}>
-              <div className="inline-flex items-center gap-2 px-4 py-1.5 bg-black/40 backdrop-blur-sm border border-white/30 rounded-full mb-6">
+            <motion.div key={slide.id} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0, y: -16 }} transition={{ duration: dur(0.4) }}>
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: dur(0.5), ease: EASE }}
+                className="inline-flex items-center gap-2 px-4 py-1.5 bg-black/40 backdrop-blur-sm border border-white/30 rounded-full mb-6"
+              >
                 <span className="w-2 h-2 rounded-full bg-brand-light animate-pulse" />
                 <span className="text-white font-bold text-xs tracking-wide uppercase" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.8)' }}>{slide.eyebrow}</span>
-              </div>
+              </motion.div>
 
-              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white leading-[1.05] mb-6" style={{ textShadow: '0 2px 20px rgba(0,0,0,0.9)' }}>
+              <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold text-white leading-[1.05] mb-6" style={{ textShadow: '0 2px 20px rgba(0,0,0,0.6)' }}>
                 {slide.headline.map((line, i) => (
-                  <span key={i} className={i === slide.headline.length - 1 ? 'text-brand-light' : ''}>
-                    {line}<br />
+                  <span key={line} className="block overflow-hidden pb-[0.08em]">
+                    <motion.span
+                      className={`block ${i === slide.headline.length - 1 ? 'text-brand-light' : ''}`}
+                      initial={{ y: '105%' }}
+                      animate={{ y: 0 }}
+                      transition={{ duration: dur(0.75), ease: EASE, delay: reduce ? 0 : 0.1 + i * 0.12 }}
+                    >
+                      {line}
+                    </motion.span>
                   </span>
                 ))}
               </h1>
 
-              <p className="text-white font-medium text-lg leading-relaxed mb-8 max-w-md" style={{ textShadow: '0 1px 8px rgba(0,0,0,0.9)' }}>{slide.copy}</p>
+              <motion.p
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: dur(0.6), ease: EASE, delay: reduce ? 0 : 0.5 }}
+                className="text-white font-medium text-lg leading-relaxed mb-8 max-w-md"
+                style={{ textShadow: '0 1px 8px rgba(0,0,0,0.8)' }}
+              >
+                {slide.copy}
+              </motion.p>
 
-              <div className="inline-flex items-center gap-2.5 bg-black/40 backdrop-blur-sm border border-white/30 rounded-full px-4 py-2 mb-10">
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: dur(0.6), ease: EASE, delay: reduce ? 0 : 0.65 }}
+                className="inline-flex items-center gap-2.5 bg-black/40 backdrop-blur-sm border border-white/30 rounded-full px-4 py-2 mb-10"
+              >
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#22D3EE" strokeWidth="2.5">
                   <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
                 </svg>
                 <span className="text-white text-sm font-semibold" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.8)' }}>{slide.fact}</span>
-              </div>
+              </motion.div>
             </motion.div>
           </AnimatePresence>
 
@@ -110,9 +161,9 @@ export default function Hero() {
             </a>
           </div>
         </div>
-      </div>
+      </motion.div>
 
-      <div className="absolute bottom-8 left-6 lg:left-10 z-20 flex items-center gap-4">
+      <div className="absolute bottom-24 lg:bottom-8 left-6 lg:left-10 z-20 flex items-center gap-4">
         {SLIDES.map((s, i) => (
           <button key={s.id} onClick={() => setIndex(i)} className="relative h-1 w-10 rounded-full bg-white/25 overflow-hidden" aria-label={`Show slide ${i + 1}`}>
             <span className="absolute inset-0 bg-white/25" />
@@ -128,6 +179,17 @@ export default function Hero() {
             {i === index && paused && <span className="absolute inset-y-0 left-0 bg-brand-light rounded-full w-1/3" />}
           </button>
         ))}
+      </div>
+
+      <div className="absolute bottom-8 right-6 lg:right-10 z-20 hidden sm:flex flex-col items-center gap-2 text-white/70" aria-hidden="true">
+        <span className="text-[10px] tracking-[0.25em] uppercase">Scroll</span>
+        <span className="relative block w-px h-12 bg-white/25 overflow-hidden">
+          <motion.span
+            className="absolute inset-x-0 top-0 h-5 bg-brand-light"
+            animate={reduce ? undefined : { y: ['-100%', '240%'] }}
+            transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+          />
+        </span>
       </div>
     </section>
   );

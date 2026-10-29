@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useState, useRef } from 'react';
+import { motion, AnimatePresence, useScroll, useTransform, useReducedMotion } from 'framer-motion';
 
 const FORMSPREE_ENDPOINT = 'https://formspree.io/f/mdarwbrv';
 
@@ -41,6 +41,10 @@ export default function Contact() {
   const [urgency, setUrgency] = useState('');
   const [status, setStatus] = useState('idle');
   const [error, setError] = useState(false);
+  const sectionRef = useRef(null);
+  const reduce = useReducedMotion();
+  const { scrollYProgress } = useScroll({ target: sectionRef, offset: ['start end', 'end start'] });
+  const bgY = useTransform(scrollYProgress, [0, 1], ['-8%', '8%']);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -71,8 +75,18 @@ export default function Contact() {
   };
 
   return (
-    <section id="contact" className="py-24 bg-white">
-      <div className="max-w-7xl mx-auto px-6">
+    <section id="contact" ref={sectionRef} className="relative overflow-hidden py-24 lg:py-32 bg-text-dark">
+      <motion.img
+        src="/images/contact-van.webp"
+        alt=""
+        aria-hidden="true"
+        loading="lazy"
+        decoding="async"
+        className="absolute inset-x-0 -top-[10%] w-full h-[120%] object-cover"
+        style={reduce ? undefined : { y: bgY }}
+      />
+      <div className="absolute inset-0 bg-gradient-to-r from-text-dark/90 via-text-dark/75 to-text-dark/60" />
+      <div className="relative max-w-7xl mx-auto px-6">
         <div className="grid lg:grid-cols-2 gap-16 items-start">
 
           <motion.div
@@ -81,11 +95,11 @@ export default function Contact() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <span className="section-tag">Book a Plumber</span>
-            <h2 className="font-display font-bold text-4xl sm:text-5xl text-text-dark leading-tight mb-6">
+            <span className="section-tag !text-brand-light">Book a Plumber</span>
+            <h2 className="font-display font-bold text-4xl sm:text-5xl text-white leading-tight mb-6">
               Get a free quote today.
             </h2>
-            <p className="text-text-mid leading-relaxed mb-10">
+            <p className="text-white/75 leading-relaxed mb-10">
               Answer a couple quick questions and we'll call you back within 30 minutes during business hours. For emergencies, call us directly.
             </p>
 
@@ -97,8 +111,8 @@ export default function Contact() {
                   </svg>
                 </div>
                 <div>
-                  <p className="font-sans font-bold text-text-dark">(602) 555-0147</p>
-                  <p className="text-text-muted text-xs">24/7 emergency line</p>
+                  <p className="font-sans font-bold text-white">(602) 555-0147</p>
+                  <p className="text-white/55 text-xs">24/7 emergency line</p>
                 </div>
               </a>
 
@@ -109,8 +123,8 @@ export default function Contact() {
                   </svg>
                 </div>
                 <div>
-                  <p className="font-sans font-bold text-text-dark">info@swiftflowplumbing.com</p>
-                  <p className="text-text-muted text-xs">Reply within one business day</p>
+                  <p className="font-sans font-bold text-white">info@swiftflowplumbing.com</p>
+                  <p className="text-white/55 text-xs">Reply within one business day</p>
                 </div>
               </a>
 
@@ -121,23 +135,20 @@ export default function Contact() {
                   </svg>
                 </div>
                 <div>
-                  <p className="font-sans font-bold text-text-dark">Phoenix & Surrounding Areas</p>
-                  <p className="text-text-muted text-xs">Scottsdale, Tempe, Mesa, Chandler & more</p>
+                  <p className="font-sans font-bold text-white">Phoenix & Surrounding Areas</p>
+                  <p className="text-white/55 text-xs">Scottsdale, Tempe, Mesa, Chandler & more</p>
                 </div>
               </div>
             </div>
 
-            <div className="bg-red-50 border border-red-100 rounded-2xl p-5 flex items-center gap-4">
-              <div className="w-10 h-10 bg-red-500 rounded-xl flex items-center justify-center flex-shrink-0">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
-                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
-                  <line x1="12" y1="9" x2="12" y2="13"/>
-                  <line x1="12" y1="17" x2="12.01" y2="17"/>
-                </svg>
-              </div>
+            <div className="flex items-center gap-4 border-t border-white/15 pt-6">
+              <span className="relative flex h-3 w-3 flex-shrink-0">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-60" />
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500" />
+              </span>
               <div>
-                <p className="font-sans font-bold text-red-700 text-sm">Plumbing Emergency?</p>
-                <p className="text-red-500 text-xs mt-0.5">Call (602) 555-0147 — we answer 24/7</p>
+                <p className="font-sans font-bold text-white text-sm">Plumbing Emergency?</p>
+                <p className="text-white/65 text-xs mt-0.5">Call (602) 555-0147 — we answer 24/7</p>
               </div>
             </div>
           </motion.div>
@@ -147,7 +158,7 @@ export default function Contact() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="bg-gray-warm border border-gray-mid rounded-2xl p-6 sm:p-8"
+            className=""
           >
             <div className="flex flex-col gap-4 mb-2">
               <BotBubble>Hey! What's going on with your plumbing? 🔧</BotBubble>
@@ -215,13 +226,13 @@ export default function Contact() {
               )}
 
               {step === 'success' && (
-                <motion.div key="success" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mt-4 flex items-center gap-3 bg-brand/10 border border-brand/20 rounded-xl px-4 py-3.5">
+                <motion.div key="success" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mt-4 flex items-center gap-3 bg-white/10 border border-white/20 rounded-xl px-4 py-3.5">
                   <div className="w-8 h-8 bg-brand rounded-full flex items-center justify-center flex-shrink-0">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5">
                       <path d="M20 6L9 17l-5-5"/>
                     </svg>
                   </div>
-                  <p className="text-text-dark text-sm font-semibold">We'll call you back within 30 minutes!</p>
+                  <p className="text-white text-sm font-semibold">We'll call you back within 30 minutes!</p>
                 </motion.div>
               )}
             </AnimatePresence>

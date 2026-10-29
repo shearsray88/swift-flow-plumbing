@@ -1,5 +1,5 @@
-import { motion, AnimatePresence } from 'framer-motion';
-import { useState } from 'react';
+import { motion, AnimatePresence, useInView, useReducedMotion } from 'framer-motion';
+import { useState, useRef } from 'react';
 
 const ZONES = [
   { id: 'scottsdale', name: 'Scottsdale', time: '20 min', x: 310, y: 186, ring: 1 },
@@ -12,6 +12,9 @@ const RINGS = [{ r: 90 }, { r: 150 }, { r: 210 }];
 
 export default function MapSection() {
   const [active, setActive] = useState('scottsdale');
+  const svgRef = useRef(null);
+  const inView = useInView(svgRef, { once: true, margin: '0px 0px -15% 0px' });
+  const reduce = useReducedMotion();
   const activeZone = ZONES.find((z) => z.id === active);
 
   return (
@@ -25,19 +28,26 @@ export default function MapSection() {
             transition={{ duration: 0.8 }}
             className="w-full max-w-sm sm:max-w-md"
           >
-            <svg viewBox="0 0 500 500" className="w-full h-auto">
+            <svg ref={svgRef} viewBox="0 0 500 500" className="w-full h-auto">
               {RINGS.map((ring, i) => (
-                <circle
+                <motion.circle
                   key={ring.r}
                   cx="250"
                   cy="250"
-                  r={ring.r}
                   fill="none"
                   stroke="#0891B2"
                   strokeWidth={activeZone?.ring === i + 1 ? 2.5 : 1}
                   strokeDasharray="4 6"
-                  opacity={activeZone?.ring === i + 1 ? 0.6 : 0.2}
-                  style={{ transition: 'all 0.4s ease' }}
+                  initial={false}
+                  animate={{
+                    r: inView ? ring.r : 0,
+                    opacity: inView ? (activeZone?.ring === i + 1 ? 0.6 : 0.2) : 0,
+                  }}
+                  transition={{
+                    r: { duration: reduce ? 0 : 1.1, delay: reduce ? 0 : i * 0.25, ease: [0.22, 1, 0.36, 1] },
+                    opacity: { duration: reduce ? 0 : 0.4 },
+                  }}
+                  style={{ transition: 'stroke-width 0.4s ease' }}
                 />
               ))}
 
@@ -47,11 +57,14 @@ export default function MapSection() {
                 Phoenix HQ
               </text>
 
-              {ZONES.map((z) => {
+              {ZONES.map((z, zi) => {
                 const isActive = active === z.id;
                 return (
-                  <g
+                  <motion.g
                     key={z.id}
+                    initial={false}
+                    animate={{ opacity: inView ? 1 : 0 }}
+                    transition={{ duration: reduce ? 0 : 0.5, delay: reduce ? 0 : 0.7 + zi * 0.15 }}
                     onMouseEnter={() => setActive(z.id)}
                     onClick={() => setActive(z.id)}
                     role="button"
@@ -95,7 +108,7 @@ export default function MapSection() {
                     >
                       {z.name}
                     </text>
-                  </g>
+                  </motion.g>
                 );
               })}
             </svg>

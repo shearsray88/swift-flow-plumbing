@@ -18,3 +18,8 @@
     @apply inline-block text-brand font-bold text-xs tracking-[0.2em] uppercase mb-4;
   }
 }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .animate-ping, .animate-pulse { animation: none; }
+}
