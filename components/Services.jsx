@@ -1,5 +1,13 @@
-import { useRef, useState } from 'react';
-import { motion, AnimatePresence, useScroll, useMotionValueEvent, useReducedMotion } from 'framer-motion';
+import { useRef } from 'react';
+import { motion, useScroll, useTransform, useReducedMotion } from 'framer-motion';
+
+const EASE = [0.22, 1, 0.36, 1];
+
+const container = { hidden: {}, show: { transition: { staggerChildren: 0.12, delayChildren: 0.1 } } };
+const rise = { hidden: { opacity: 0, y: 40 }, show: { opacity: 1, y: 0, transition: { duration: 0.85, ease: EASE } } };
+const mask = { hidden: { y: '110%' }, show: { y: 0, transition: { duration: 0.95, ease: EASE } } };
+const grow = { hidden: { scaleX: 0 }, show: { scaleX: 1, transition: { duration: 1.1, ease: EASE } } };
+const slide = { hidden: { opacity: 0, x: -24 }, show: { opacity: 1, x: 0, transition: { duration: 0.6, ease: EASE } } };
 
 const SERVICES = [
   {
@@ -7,7 +15,6 @@ const SERVICES = [
       <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
     ),
     title: 'Emergency Plumbing',
-    short: 'Emergency',
     image: '/images/service-1-emergency.webp',
     desc: 'Burst pipes, flooding, gas leaks — we respond within 60 minutes, any time of day or night. No extra charge for after-hours calls.',
     details: ['60-minute response guarantee', 'Available 24/7/365', 'No after-hours surcharge', 'All emergency repairs covered'],
@@ -20,7 +27,6 @@ const SERVICES = [
       </>
     ),
     title: 'Drain Cleaning',
-    short: 'Drains',
     image: '/images/service-2-drain.webp',
     desc: 'Slow drains or complete blockages cleared fast. We use hydro-jetting and camera inspection to clear clogs and keep them from coming back.',
     details: ['Hydro-jet drain cleaning', 'Camera pipe inspection', 'Kitchen & bathroom drains', 'Main sewer line clearing'],
@@ -36,7 +42,6 @@ const SERVICES = [
       </>
     ),
     title: 'Water Heater Services',
-    short: 'Water Heaters',
     image: '/images/service-3-heater.webp',
     desc: 'Installation, repair, and replacement of all water heater types. We stock most units on our trucks for same-day installation.',
     details: ['Tank & tankless water heaters', 'Same-day installation', 'All major brands serviced', '6-year warranty on new units'],
@@ -49,7 +54,6 @@ const SERVICES = [
       </>
     ),
     title: 'Pipe Repair & Repiping',
-    short: 'Repiping',
     image: '/images/service-4-repipe.webp',
     desc: 'From a single leaking pipe to full home repiping. We work with minimal disruption to your home and clean up completely after every job.',
     details: ['Leak detection & repair', 'Full home repiping', 'Copper & PEX piping', 'Minimal wall disruption'],
@@ -63,7 +67,6 @@ const SERVICES = [
       </>
     ),
     title: 'Fixture Installation',
-    short: 'Fixtures',
     image: '/images/service-5-fixtures.webp',
     desc: 'Toilets, faucets, sinks, showers — we install all plumbing fixtures with precision. Supply your own or let us source from trusted brands.',
     details: ['Toilet installation & repair', 'Faucet & sink replacement', 'Shower & tub fixtures', 'Garbage disposal install'],
@@ -76,139 +79,123 @@ const SERVICES = [
       </>
     ),
     title: 'Plumbing Inspections',
-    short: 'Inspections',
     image: '/images/service-6-inspection.webp',
     desc: 'Buying a home or had recurring issues? Our full plumbing inspection gives you a clear picture of everything with a written report.',
     details: ['Full home inspection', 'Camera pipe inspection', 'Written detailed report', 'Pre-purchase inspections'],
   },
 ];
 
-export default function Services() {
+function Panel({ service, index, total }) {
   const ref = useRef(null);
-  const [active, setActive] = useState(0);
   const reduce = useReducedMotion();
-  const service = SERVICES[active];
+  const alignRight = index % 2 === 1;
 
-  const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end end'] });
+  const { scrollYProgress } = useScroll({ target: ref, offset: ['start end', 'end start'] });
+  const imgY = useTransform(scrollYProgress, [0, 1], ['-12%', '12%']);
+  const imgScale = useTransform(scrollYProgress, [0, 0.5, 1], [1.3, 1.12, 1.05]);
 
-  useMotionValueEvent(scrollYProgress, 'change', (v) => {
-    const i = Math.min(SERVICES.length - 1, Math.max(0, Math.floor(v * SERVICES.length)));
-    setActive(i);
-  });
-
-  const goTo = (i) => {
-    const el = ref.current;
-    if (!el) return;
-    const top = el.getBoundingClientRect().top + window.scrollY;
-    const scrollable = el.offsetHeight - window.innerHeight;
-    window.scrollTo({
-      top: top + ((i + 0.5) / SERVICES.length) * scrollable,
-      behavior: reduce ? 'auto' : 'smooth',
-    });
-  };
+  const num = String(index + 1).padStart(2, '0');
 
   return (
-    <section
-      id="services"
-      ref={ref}
-      className="relative bg-text-dark"
-      style={{ height: `${SERVICES.length * 70 + 30}vh` }}
-    >
-      <div className="sticky top-0 h-screen overflow-hidden">
-        {SERVICES.map((s, i) => (
-          <motion.img
-            key={s.image}
-            src={s.image}
-            alt=""
-            aria-hidden="true"
-            decoding="async"
-            loading={i === 0 ? 'eager' : 'lazy'}
-            className="absolute inset-0 w-full h-full object-cover"
-            initial={false}
-            animate={{ opacity: i === active ? 1 : 0, scale: reduce ? 1 : i === active ? 1.08 : 1 }}
-            transition={{
-              opacity: { duration: reduce ? 0 : 0.7 },
-              scale: { duration: reduce ? 0 : i === active ? 6 : 0.9, ease: 'easeOut' },
-            }}
-          />
-        ))}
-        <div className="absolute inset-0 bg-gradient-to-t from-text-dark/95 via-text-dark/75 to-text-dark/45 lg:bg-gradient-to-r lg:from-text-dark/90 lg:via-text-dark/65 lg:to-text-dark/55" />
+    <div ref={ref} className="relative min-h-[80vh] lg:min-h-[92vh] flex items-center overflow-hidden bg-text-dark">
+      <motion.img
+        src={service.image}
+        alt=""
+        aria-hidden="true"
+        decoding="async"
+        loading={index === 0 ? 'eager' : 'lazy'}
+        className="absolute inset-x-0 -top-[15%] w-full h-[130%] object-cover"
+        style={reduce ? undefined : { y: imgY, scale: imgScale }}
+      />
+      <div
+        className={`absolute inset-0 bg-gradient-to-t from-black/75 via-black/25 to-transparent ${
+          alignRight ? 'lg:bg-gradient-to-l' : 'lg:bg-gradient-to-r'
+        } lg:from-black/75 lg:via-black/45 lg:to-transparent`}
+      />
 
-        <div className="absolute right-3 lg:right-6 top-1/4 bottom-1/4 w-px bg-white/20" aria-hidden="true">
-          <motion.div className="w-full h-full bg-brand-light origin-top" style={{ scaleY: scrollYProgress }} />
-        </div>
+      <div className={`relative z-10 w-full max-w-7xl mx-auto px-6 py-20 flex ${alignRight ? 'lg:justify-end' : 'lg:justify-start'} items-end lg:items-center`}>
+        <motion.div
+          className="max-w-xl w-full"
+          variants={container}
+          initial={reduce ? 'show' : 'hidden'}
+          whileInView="show"
+          viewport={{ once: true, amount: 0.35 }}
+        >
+          <motion.div variants={rise} className="flex items-baseline gap-4 mb-4">
+            <span
+              className="font-display font-bold text-7xl lg:text-8xl leading-none"
+              style={{ color: 'transparent', WebkitTextStroke: '1.5px rgba(255,255,255,0.7)' }}
+            >
+              {num}
+            </span>
+            <span className="text-white/60 text-sm font-semibold tracking-[0.2em]">/ {String(total).padStart(2, '0')}</span>
+          </motion.div>
 
-        <div className="relative z-10 h-full max-w-7xl mx-auto px-6 flex flex-col justify-end lg:justify-center pb-24 lg:pb-0">
-          <div className="grid lg:grid-cols-2 gap-6 lg:gap-16 items-end lg:items-center">
-            <div>
-              <span className="section-tag !text-brand-light">What We Fix</span>
-              <h2 className="font-display font-bold text-3xl sm:text-5xl lg:text-6xl text-white leading-tight mb-4 lg:mb-6">
-                Every plumbing problem, solved.
-              </h2>
-              <p className="hidden lg:block text-white/75 leading-relaxed mb-8 max-w-md">
-                From dripping faucets to full repiping jobs — our licensed plumbers handle it all, same day in most cases.
-              </p>
-              <a href="#contact" className="btn-primary hidden lg:inline-flex">Book a Plumber</a>
-            </div>
-
-            <div>
-              <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-5">
-                {SERVICES.map((s, i) => {
-                  const isActive = active === i;
-                  return (
-                    <button
-                      key={s.title}
-                      onClick={() => goTo(i)}
-                      className={`relative px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-colors ${
-                        isActive ? 'text-white' : 'text-white/70 hover:text-white bg-white/10'
-                      }`}
-                    >
-                      {isActive && (
-                        <motion.div
-                          layoutId="service-tab-pill"
-                          className="absolute inset-0 bg-brand rounded-lg"
-                          transition={{ type: 'spring', stiffness: 380, damping: 32 }}
-                        />
-                      )}
-                      <span className="relative z-10">{s.short}</span>
-                    </button>
-                  );
-                })}
-              </div>
-
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={service.title}
-                  initial={{ opacity: 0, y: 14 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -8 }}
-                  transition={{ duration: reduce ? 0 : 0.35 }}
-                >
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-11 h-11 bg-brand rounded-xl flex items-center justify-center flex-shrink-0">
-                      <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.6">
-                        {service.icon}
-                      </svg>
-                    </div>
-                    <h3 className="font-bold text-xl sm:text-2xl text-white">{service.title}</h3>
-                  </div>
-
-                  <p className="text-white/80 text-sm sm:text-base leading-relaxed mb-5 max-w-xl">{service.desc}</p>
-
-                  <ul className="grid sm:grid-cols-2 gap-x-6 gap-y-2.5 border-t border-white/20 pt-5 max-w-xl">
-                    {service.details.map((d) => (
-                      <li key={d} className="flex items-center gap-2.5 text-white text-sm font-medium">
-                        <span className="w-1.5 h-1.5 rounded-full bg-brand-light flex-shrink-0" />
-                        {d}
-                      </li>
-                    ))}
-                  </ul>
-                </motion.div>
-              </AnimatePresence>
-            </div>
+          <div className="flex items-center gap-3 mb-4">
+            <motion.div variants={rise} className="w-11 h-11 bg-brand rounded-xl flex items-center justify-center flex-shrink-0">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.6">
+                {service.icon}
+              </svg>
+            </motion.div>
+            <h3 className="overflow-hidden pb-1">
+              <motion.span variants={mask} className="block font-display font-bold text-3xl sm:text-4xl lg:text-5xl text-white leading-tight">
+                {service.title}
+              </motion.span>
+            </h3>
           </div>
-        </div>
+
+          <motion.p variants={rise} className="text-white/90 text-base lg:text-lg leading-relaxed mb-6" style={{ textShadow: '0 1px 10px rgba(0,0,0,0.5)' }}>
+            {service.desc}
+          </motion.p>
+
+          <motion.div variants={grow} className="h-px bg-white/40 origin-left mb-5" />
+
+          <ul className="grid sm:grid-cols-2 gap-x-6 gap-y-2.5 mb-8">
+            {service.details.map((d) => (
+              <motion.li key={d} variants={slide} className="flex items-center gap-2.5 text-white text-sm font-medium">
+                <span className="w-1.5 h-1.5 rounded-full bg-brand-light flex-shrink-0" />
+                {d}
+              </motion.li>
+            ))}
+          </ul>
+
+          <motion.div variants={rise}>
+            <a href="#contact" className="btn-primary">Book a Plumber</a>
+          </motion.div>
+        </motion.div>
       </div>
+    </div>
+  );
+}
+
+export default function Services() {
+  const reduce = useReducedMotion();
+
+  return (
+    <section id="services" className="relative bg-text-dark">
+      <div className="max-w-7xl mx-auto px-6 pt-24 pb-14 lg:pt-32 lg:pb-20">
+        <motion.div
+          variants={container}
+          initial={reduce ? 'show' : 'hidden'}
+          whileInView="show"
+          viewport={{ once: true, amount: 0.5 }}
+          className="max-w-3xl"
+        >
+          <motion.span variants={rise} className="section-tag !text-brand-light">What We Fix</motion.span>
+          <h2 className="overflow-hidden pb-2">
+            <motion.span variants={mask} className="block font-display font-bold text-4xl sm:text-5xl lg:text-7xl text-white leading-[1.05]">
+              Every plumbing problem, solved.
+            </motion.span>
+          </h2>
+          <motion.p variants={rise} className="text-white/70 text-lg leading-relaxed mt-6 max-w-xl">
+            From dripping faucets to full repiping jobs — our licensed plumbers handle it all, same day in most cases.
+          </motion.p>
+        </motion.div>
+      </div>
+
+      {SERVICES.map((s, i) => (
+        <Panel key={s.title} service={s} index={i} total={SERVICES.length} />
+      ))}
     </section>
   );
 }
