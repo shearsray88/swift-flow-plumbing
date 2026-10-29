@@ -8,6 +8,7 @@ import Contact from '../components/Contact';
 import MapSection from '../components/MapSection';
 import Footer from '../components/Footer';
 import Stats from '../components/Stats';
+import BeforeAfter from '../components/BeforeAfter';
 import ScrollProgress from '../components/ScrollProgress';
 
 export default function Home() {
@@ -29,6 +30,7 @@ export default function Home() {
         <Hero />
         <Services />
         <Process />
+        <BeforeAfter />
         <Stats />
         <Reviews />
         <Contact />
